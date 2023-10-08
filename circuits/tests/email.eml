@@ -1,0 +1,29 @@
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696772726; x=1697377526; darn=estudys.com;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AqRWeJI8HWFVr8ZQBdSw1eUdW8kJHPBLUcN0MoFYDM8=;
+        b=JNKeYrwSK2q3EEcSu9qtXHrrO2wFs7+3P7Gdvd3lWVZsBs50n/LEKX/349D8rz4LcE
+         zmkeHa0Z6uq4mVE00VW6b+nHpwtiB3bUUcwAAs9nFFWlgK6zs/dZaacmIQ8uMGD+IGae
+         0Q2wKOHhUFxc0DoFEcm4TTs21nzlj7JzJTNnp4VyPUiEoD42q9BQet8XMqrHViySoUfF
+         uNMy80GrCNxhVv/jVINUDFbtmCWT8f6Vv3MiVs3BNM+we+UHfQ4WyhmhdFlZ0x3qzXMP
+         SxQcj/53k3hwziXeQIGZlHnas+2Pzd1o4x1SdDUybJPd3GddYOpDpK5GIksyNrC4YKLJ
+         CSYA==
+From: Javier Su <javier.su.weijie@gmail.com>
+Date: Sun, 8 Oct 2023 21:45:15 +0800
+Message-ID: <CAEKnYWBc=r5L64i1BfZMiqxh_R5y1Yv1fvh-muMKU797c161ZQ@mail.gmail.com>
+Subject: APPROVE PROPOSAL #111
+To: mogari4530@estudys.com
+Content-Type: multipart/alternative; boundary="0000000000009deabc060734af6b"
+
+--0000000000009deabc060734af6b
+Content-Type: text/plain; charset="UTF-8"
+
+
+
+--0000000000009deabc060734af6b
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr"></div>
+
+--0000000000009deabc060734af6b--
