@@ -43,6 +43,9 @@ describe("Subject Regex", () => {
       });
       await circuit.checkConstraints(witness);
       const signals = await circuit.getJSONOutput('main', witness);
-      assert_reveal(signals.main.reveal_proposal, "111")
+      // console.log(signals.main.reveal_proposal)
+      // console.log(signals.main.reveal_safe)
+      assert_reveal(signals.main.reveal_proposal, "1")
+      assert_reveal(signals.main.reveal_safe, "0x478958e6da0f9a9e5d83654555590225734df73b")
   });
 });

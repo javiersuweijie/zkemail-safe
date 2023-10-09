@@ -1,29 +1,30 @@
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696772726; x=1697377526; darn=estudys.com;
+        d=gmail.com; s=20230601; t=1696809804; x=1697414604; darn=estudys.com;
         h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=AqRWeJI8HWFVr8ZQBdSw1eUdW8kJHPBLUcN0MoFYDM8=;
-        b=JNKeYrwSK2q3EEcSu9qtXHrrO2wFs7+3P7Gdvd3lWVZsBs50n/LEKX/349D8rz4LcE
-         zmkeHa0Z6uq4mVE00VW6b+nHpwtiB3bUUcwAAs9nFFWlgK6zs/dZaacmIQ8uMGD+IGae
-         0Q2wKOHhUFxc0DoFEcm4TTs21nzlj7JzJTNnp4VyPUiEoD42q9BQet8XMqrHViySoUfF
-         uNMy80GrCNxhVv/jVINUDFbtmCWT8f6Vv3MiVs3BNM+we+UHfQ4WyhmhdFlZ0x3qzXMP
-         SxQcj/53k3hwziXeQIGZlHnas+2Pzd1o4x1SdDUybJPd3GddYOpDpK5GIksyNrC4YKLJ
-         CSYA==
+        bh=ru3meHHEy5rki6X+zFRoSyrqe5+nTj7n/6iTRkAqbbA=;
+        b=N4U4SWNh2pb0WzyJ7jfevRzpjHpWkvA8jMf/TbZ9rekECcf3qZtM8SjclGUPxyaz/9
+         W5xn54bJkqMCk+7l2KdoT0SJjVcufhi8w8PRHM2rVav9R1U9nM+3hVS5VAoBOTt60cWM
+         BAx3VUXUohPcCT42tS06mkv4MZe2U0ERYZ2VOicrodU0mmpqyxKdKYJC2ptRnWMMJquq
+         TAS4strHEobBzt0wBFRJdvHpLiQ1ZXY2xHSLux94Ao4ZWRLc0i88f/X6L0240DUuFRHN
+         TupXASLrhRCPLAtjkm/wuKbp7RfGfuwhfWLY4GbdDcgig+aJYYbtThz1Wkd+Kooj/BR7
+         JZ6w==
+MIME-Version: 1.0
 From: Javier Su <javier.su.weijie@gmail.com>
-Date: Sun, 8 Oct 2023 21:45:15 +0800
-Message-ID: <CAEKnYWBc=r5L64i1BfZMiqxh_R5y1Yv1fvh-muMKU797c161ZQ@mail.gmail.com>
-Subject: APPROVE PROPOSAL #111
+Date: Mon, 9 Oct 2023 08:03:13 +0800
+Message-ID: <CAEKnYWByGZE1UAhwaR4zYxFgqyVs+8g7EYfuWoE4szFNqSKEDQ@mail.gmail.com>
+Subject: APPROVE #1 @ 0x478958e6da0f9a9e5d83654555590225734df73b
 To: mogari4530@estudys.com
-Content-Type: multipart/alternative; boundary="0000000000009deabc060734af6b"
+Content-Type: multipart/alternative; boundary="0000000000009c8a9a06073d5192"
 
---0000000000009deabc060734af6b
+--0000000000009c8a9a06073d5192
 Content-Type: text/plain; charset="UTF-8"
 
 
 
---0000000000009deabc060734af6b
+--0000000000009c8a9a06073d5192
 Content-Type: text/html; charset="UTF-8"
 
-<div dir="ltr"></div>
+<div dir="ltr"><div class="gmail_default" style="font-family:tahoma,sans-serif;font-size:small;color:#444444"><br></div></div>
 
---0000000000009deabc060734af6b--
+--0000000000009c8a9a06073d5192--
