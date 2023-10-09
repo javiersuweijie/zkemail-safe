@@ -37,15 +37,46 @@ describe("Subject Regex", () => {
 
   it("should output correct reveal with an email", async function () {
       const preSignedHeader = dkimResult.message.toString("ascii");
-      // console.log(convertMsg(preSignedHeader), convertMsg(preSignedHeader).length)
       const witness = await circuit.calculateWitness({
         msg: convertMsg(preSignedHeader),
       });
       await circuit.checkConstraints(witness);
       const signals = await circuit.getJSONOutput('main', witness);
-      // console.log(signals.main.reveal_proposal)
-      // console.log(signals.main.reveal_safe)
       assert_reveal(signals.main.reveal_proposal, "1")
       assert_reveal(signals.main.reveal_safe, "0x478958e6da0f9a9e5d83654555590225734df73b")
   });
+
+  it("should match the following subject strings", async function() {
+    const inputs = [
+      ["\r\nsubject:APPROVE #123 @ 0x123123\r\n", "123", "0x123123"],
+      ["\r\nsubject:APPROVE #123534 @ 0x1\r\n", "123534", "0x1"],
+    ];
+    for (const input of inputs) {
+      const witness = await circuit.calculateWitness({
+        msg: convertMsg(input[0]),
+      });
+      await circuit.checkConstraints(witness);
+      const signals = await circuit.getJSONOutput('main', witness);
+      assert_reveal(signals.main.reveal_proposal, input[1])
+      assert_reveal(signals.main.reveal_safe,input[2])
+    }
+  })
+
+  it("should fail to match the following subject strings", async function() {
+    const inputs = [
+      ["\r\nsubject:APPROVED #123 @ 0x123123\r\n", "", ""],
+      ["\r\nsubject:APPROVE #1235A @ 0x1\r\n", "1235", ""],
+      ["\r\nsubject:APPROVE #1235A @ 0x1X\r\n", "1235", ""],
+      ["\r\nsubject:OK #1235 @ 0x1\r\n", "", ""],
+    ];
+    for (const input of inputs) {
+      const witness = await circuit.calculateWitness({
+        msg: convertMsg(input[0]),
+      });
+      await circuit.checkConstraints(witness);
+      const signals = await circuit.getJSONOutput('main', witness);
+      assert_reveal(signals.main.reveal_proposal, input[1])
+      assert_reveal(signals.main.reveal_safe, input[2])
+    }
+  })
 });
