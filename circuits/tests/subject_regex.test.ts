@@ -8,10 +8,6 @@ import { generateCircuitInputs } from "@zk-email/helpers/dist/input-helpers";
 import { verifyDKIMSignature } from "@zk-email/helpers/dist/dkim";
 import { assert_reveal, convertMsg } from './helpers';
 
-exports.p = Scalar.fromString(
-  "21888242871839275222246405745257275088548364400416034343698204186575808495617"
-);
-
 describe("Subject Regex", () => {
   jest.setTimeout(10 * 60 * 1000); // 10 minutes
 

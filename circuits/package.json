@@ -2,7 +2,7 @@
   "name": "@zkemail-safe/circuits",
   "version": "0.0.1",
   "scripts": {
-    "test": "NODE_OPTIONS=--max_old_space_size=8192 jest tests/*.ts"
+    "test": "NODE_OPTIONS=--max_old_space_size=8192 jest"
   },
   "dependencies": {
     "@zk-email/circuits": "2.0.0",
