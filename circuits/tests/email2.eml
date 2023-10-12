@@ -1,0 +1,43 @@
+Received: from mail-oo1-f46.google.com (Unknown [10.244.15.68])
+	by 6106ab379c02 (Haraka/3.0.2) with ESMTP id 06FDFECB-7C1F-4C43-9644-E458E632CF95.1
+	envelope-from <javier.su.weijie@gmail.com>;
+	Thu, 12 Oct 2023 06:00:59 +0000
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-58111e624bdso338678eaf.3
+        for <yariyi9366@locawin.com>; Wed, 11 Oct 2023 23:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697090459; x=1697695259; darn=locawin.com;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=lyYTdoI0qjmsQSw/pKYp/bK3m8eCKWSpojeWCZgRoNUeRIH11sSIGMeITR5hOKQFzD
+         i9egaPl0XInmT96kSSv/yX5q0reB5mZgjwtUAG0w/DoU/+EKnEBkvqWwRHHanVfZ0Kmn
+         xaZ+NzyYxdgwYI8aqyzy4tI7RpAGmn2QwoC5Vg93IOA/g3hhMFmBIMz8V034MVtkjvAN
+         hD7uBHUxz+o9UIG4PBc6IPiFKjT6hTcK81AG6gRy59iDNw+7jl17quh1YQ8RzgwyWqQ4
+         q6XuGqZvMt8feFJYOQKTGVaUMlkV6uN/5yWzcA4bNze+Es79htNnLlWmQlfqS8Onx0DE
+         E+bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697090459; x=1697695259;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=nP98u/VumbCDWVyuM5npivTOtoXR40MFTsULpaNZuQMY0EJ6aEUz9H+HVf0dQT2d/f
+         dmmKUPVdstGhAD38blgvfkvasc+dObw6gqtLSt30j4q74fJQRjb4LpewX906MaubxQ2W
+         Wsi6MSHR/iEO6+uUs/q89a/uPRSB92H+DiyPs5M1yGr7LTnk06AhXiEffns2EH/5DMdJ
+         fX23PaoEd8YSO5YJlPbHvngrYPa38UVeQ+Va1oJYaIemGQm0CoBFSlIAdnkBkn+O81pP
+         uDHpulWuBZS0VzIJo855WQxkUlin9z12vAC4Xu6lZadLlLZwAIajTD5a4c8s/9xWXja0
+         t0fQ==
+X-Gm-Message-State: AOJu0YxLmNenZDR9oTLDOErY2xyMLXQcikHq/Dzs71AfjBrhlU9947+A
+	Y3aaYxdX+gp/88lROy88rQbDQEq0AVIwX78dbx8fGwAN
+X-Google-Smtp-Source: AGHT+IGee4gOSndATp1UScV6qgGyRHHmPQvr0YfA0toaWR5LS0p/C3/P4Rm/JaYSXpW85zUWTj4AMhNnLVNJAKYGh3U=
+X-Received: by 2002:a05:6870:f141:b0:1d0:e371:e95c with SMTP id
+ l1-20020a056870f14100b001d0e371e95cmr26331996oac.40.1697090458893; Wed, 11
+ Oct 2023 23:00:58 -0700 (PDT)
+MIME-Version: 1.0
+From: Javier Su <javier.su.weijie@gmail.com>
+Date: Thu, 12 Oct 2023 14:00:48 +0800
+Message-ID: <CAEKnYWBmmqrUkdST88pVz4LoZaDVqs=vVmqTp8FPjUU8NgCUOA@mail.gmail.com>
+Subject: APPROVE #0 @ 0x0000000000000000000000000000000000000001
+To: yariyi9366@locawin.com
+Content-Type: text/plain; charset="UTF-8"
+
+

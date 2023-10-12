@@ -64,12 +64,25 @@ contract ZkEmailSafe {
         bytes memory encoded = abi.encode(to, amount, data, operation);
         uint64 proposalId = nextProposalId[safe];
         proposals[safe][proposalId] = encoded;
+        nextProposalId[safe] += 1;
         return proposalId;
     }
     
     function execute(address safe, uint64 proposalId) external returns (bool) {
         bytes storage proposalData = proposals[safe][proposalId];
         (address to, uint256 amount, bytes memory data, Enum.Operation operation) = abi.decode(proposalData, (address, uint256, bytes, Enum.Operation));
+
+        uint64 voteCount = 0;
+        bytes32 currentEmail = email_start;
+        for (uint i = 0; i < max_signers; i++) {
+            currentEmail = votes[safe][proposalId][email_start];
+            if (currentEmail == 0x00) {
+                break;
+            }
+            voteCount += 1;
+        }
+
+        require(voteCount >= thresholds[safe], "ZE0001");
         return ISafe(safe).execTransactionFromModule(to, amount, data, operation);
     }
 
@@ -88,6 +101,10 @@ contract ZkEmailSafe {
             count += 1;
         }
         return count;
+    }
+
+    function proposalCount(address safe) external view returns (uint64) {
+        return nextProposalId[safe];
     }
 
     function isSigner(address safe, bytes32 email) external view returns (bool) {
