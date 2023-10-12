@@ -18,23 +18,23 @@ contract MailServer is Ownable {
     function initMailserverKeys() internal {
         // TODO: Create a type that takes in a raw RSA key, the bit count,
         // and whether or not its base64 encoded, and converts it to either 8 or 16 signals
-        verifiedMailserverKeys["gmail.com"][0] = 1886180949733815343726466520516992271;
-        verifiedMailserverKeys["gmail.com"][1] = 1551366393280668736485689616947198994;
-        verifiedMailserverKeys["gmail.com"][2] = 1279057759087427731263511728885611780;
-        verifiedMailserverKeys["gmail.com"][3] = 1711061746895435768547617398484429347;
-        verifiedMailserverKeys["gmail.com"][4] = 2329140368326888129406637741054282011;
-        verifiedMailserverKeys["gmail.com"][5] = 2094858442222190249786465516374057361;
-        verifiedMailserverKeys["gmail.com"][6] = 2584558507302599829894674874442909655;
-        verifiedMailserverKeys["gmail.com"][7] = 1521552483858643935889582214011445675;
-        verifiedMailserverKeys["gmail.com"][8] = 176847449040377757035522930003764000;
-        verifiedMailserverKeys["gmail.com"][9] = 632921959964166974634188077062540145;
-        verifiedMailserverKeys["gmail.com"][10] = 2172441457165086627497230906075093832;
-        verifiedMailserverKeys["gmail.com"][11] = 248112436365636977369105357296082574;
-        verifiedMailserverKeys["gmail.com"][12] = 1408592841800630696650784801114783401;
-        verifiedMailserverKeys["gmail.com"][13] = 364610811473321782531041012695979858;
-        verifiedMailserverKeys["gmail.com"][14] = 342338521965453258686441392321054163;
-        verifiedMailserverKeys["gmail.com"][15] = 2269703683857229911110544415296249295;
-        verifiedMailserverKeys["gmail.com"][16] = 3643644972862751728748413716653892;
+        verifiedMailserverKeys["gmail.com"][0] = 2107195391459410975264579855291297887;
+        verifiedMailserverKeys["gmail.com"][1] = 2562632063603354817278035230349645235;
+        verifiedMailserverKeys["gmail.com"][2] = 1868388447387859563289339873373526818;
+        verifiedMailserverKeys["gmail.com"][3] = 2159353473203648408714805618210333973;
+        verifiedMailserverKeys["gmail.com"][4] = 351789365378952303483249084740952389;
+        verifiedMailserverKeys["gmail.com"][5] = 659717315519250910761248850885776286;
+        verifiedMailserverKeys["gmail.com"][6] = 1321773785542335225811636767147612036;
+        verifiedMailserverKeys["gmail.com"][7] = 258646249156909342262859240016844424;
+        verifiedMailserverKeys["gmail.com"][8] = 644872192691135519287736182201377504;
+        verifiedMailserverKeys["gmail.com"][9] = 174898460680981733302111356557122107;
+        verifiedMailserverKeys["gmail.com"][10] = 1068744134187917319695255728151595132;
+        verifiedMailserverKeys["gmail.com"][11] = 1870792114609696396265442109963534232;
+        verifiedMailserverKeys["gmail.com"][12] = 8288818605536063568933922407756344;
+        verifiedMailserverKeys["gmail.com"][13] = 1446710439657393605686016190803199177;
+        verifiedMailserverKeys["gmail.com"][14] = 2256068140678002554491951090436701670;
+        verifiedMailserverKeys["gmail.com"][15] = 518946826903468667178458656376730744;
+        verifiedMailserverKeys["gmail.com"][16] = 3222036726675473160989497427257757;
 
         verifiedMailserverKeys["hotmail.com"][0] = 128339925410438117770406273090474249;
         verifiedMailserverKeys["hotmail.com"][1] = 2158906895782814996316644028571725310;

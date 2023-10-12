@@ -4,15 +4,19 @@ import "./EmailVerifier.sol";
 import "./MailServer.sol";
 import "./ISafe.sol";
 import "./Enum.sol";
+import "./helpers/StringUtils.sol";
+// TODO: Remove this import
+import "ds-test/test.sol";  
 
 contract ZkEmailSafe {
 
     // ============================
     // Prover Constants
     // ============================
+    uint16 public constant pack_size = 8;
     uint16 public constant proposal_len = 4;
     uint16 public constant safe_len = 6;
-    uint16 public constant email_len = 4; // TODO: this might be variable
+    uint16 public constant email_len = 4;
     uint16 public constant rsa_len = 17;
     // Last two inputs are the nullifier and relayer id
     // 4 + 6 + 4 + 17 + 2 = 33
@@ -57,7 +61,6 @@ contract ZkEmailSafe {
             signers[safe][currentEmail] = emails[i];
             currentEmail = emails[i];
         }
-        nextProposalId[safe] = 0;
     }
 
     function propose(address safe, address to, uint256 amount, bytes calldata data, Enum.Operation operation) external returns (uint64) {
@@ -67,23 +70,68 @@ contract ZkEmailSafe {
         nextProposalId[safe] += 1;
         return proposalId;
     }
+
+    function vote(uint[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[33] calldata signals) external {
+        // unpack from proposal
+        uint[] memory packedProposal = new uint[](proposal_len);
+        for (uint i = 0; i < proposal_len; i++) {
+            packedProposal[i] = signals[i];
+        }
+        string memory proposalIdString = StringUtils.convertPackedBytesToString(packedProposal, pack_size * proposal_len, pack_size); 
+        uint64 proposalId = uint64(StringUtils.stringToUint(proposalIdString));
+
+        // unpack safe
+        uint[] memory packedSafe = new uint[](safe_len);
+        for (uint i = 0; i < safe_len; i++) {
+            packedSafe[i] = signals[proposal_len + i];
+        }
+        string memory safeString = StringUtils.convertPackedBytesToString(packedSafe, pack_size * safe_len, pack_size); 
+        address safe = StringUtils.toAddress(safeString);
+
+        require(this.isSafe(safe), "Safe not found");
+        require(nextProposalId[safe] > proposalId, "Proposal not found");
+
+        // unpack from email
+        uint[] memory packedEmail = new uint[](email_len);
+        for (uint i = 0; i < 4; i++) {
+            packedEmail[i] = signals[proposal_len + safe_len + i];
+        }
+        string memory email = StringUtils.convertPackedBytesToString(packedEmail, pack_size * email_len, pack_size); 
+        string memory domain = StringUtils.getDomainFromEmail(email);
+        bytes32 emailBytes = StringUtils.stringToBytes32(email);
+
+        bool canSign = this.isSigner(safe, emailBytes);
+        require(canSign, "Email cannot vote");
+
+        // verify RSA
+        for (uint i = 0; i < 17; i++) {
+            uint p = signals[14 + i];
+            require(mailServer.isVerified(domain, i, p), "RSA public key incorrect");
+        }
+
+        // verify proof
+        require(verifier.verifyProof(a,b,c,signals));
+
+        // add vote
+        bytes32 currentEmail = email_start;
+        for (uint i = 0; i < max_signers; i++) {
+            bytes32 nextEmail = votes[safe][proposalId][currentEmail];
+            require(nextEmail != emailBytes, "Signer already voted");
+            if (nextEmail == 0x0000000000000000000000000000000000000000000000000000000000000000) {
+                votes[safe][proposalId][currentEmail] = emailBytes;
+                break;
+            }
+            currentEmail = nextEmail;
+        }
+    }
     
-    function execute(address safe, uint64 proposalId) external returns (bool) {
+    function execute(address safe, uint64 proposalId) external {
         bytes storage proposalData = proposals[safe][proposalId];
         (address to, uint256 amount, bytes memory data, Enum.Operation operation) = abi.decode(proposalData, (address, uint256, bytes, Enum.Operation));
 
-        uint64 voteCount = 0;
-        bytes32 currentEmail = email_start;
-        for (uint i = 0; i < max_signers; i++) {
-            currentEmail = votes[safe][proposalId][email_start];
-            if (currentEmail == 0x00) {
-                break;
-            }
-            voteCount += 1;
-        }
-
-        require(voteCount >= thresholds[safe], "ZE0001");
-        return ISafe(safe).execTransactionFromModule(to, amount, data, operation);
+        require(this.voteCount(safe, proposalId) >= thresholds[safe], "Not enough votes");
+        require(ISafe(safe).execTransactionFromModule(to, amount, data, operation));
+        delete proposals[safe][proposalId];
     }
 
     function proposal(address safe, uint64 proposalId) external view returns (bytes memory) {
@@ -107,6 +155,19 @@ contract ZkEmailSafe {
         return nextProposalId[safe];
     }
 
+    function voteCount(address safe, uint64 proposalId) external view returns (uint64) {
+        uint64 count = 0;
+        bytes32 currentEmail = email_start;
+        for (uint i = 0; i < max_signers; i++) {
+            currentEmail = votes[safe][proposalId][currentEmail];
+            if (currentEmail == 0x0000000000000000000000000000000000000000000000000000000000000000) {
+                break;
+            }
+            count += 1;
+        }
+        return count;
+    }
+
     function isSigner(address safe, bytes32 email) external view returns (bool) {
         bytes32 currentEmail = email_start;
         for (uint i = 0; i < max_signers; i++) {
@@ -120,6 +181,11 @@ contract ZkEmailSafe {
         }
         return false;
     }
+
+    function isSafe(address safe) external view returns (bool) {
+        return signers[safe][email_start].length != 0;
+    }
+    
     function iterateSigner(address safe, bytes32 email) external view returns (bytes32) {
         return signers[safe][email];
     }
