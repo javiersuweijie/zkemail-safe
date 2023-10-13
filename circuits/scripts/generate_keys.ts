@@ -9,7 +9,7 @@
  */
 
 // @ts-ignore
-import { zKey, groth16 } from "snarkjs";
+import {zKey} from "snarkjs";
 import https from "https";
 import fs from "fs";
 import path from "path";
@@ -78,11 +78,11 @@ async function downloadPhase1() {
 }
 
 async function exec() {
-  await downloadPhase1();
-  log("✓ Phase 1:", phase1Path);
+  // await downloadPhase1();
+  // log("✓ Phase 1:", phase1Path);
 
-  await zKey.newZKey(r1cPath, phase1Path, path.join(buildDir, "circuit_0.zkey"), console);
-  log("✓ Partial ZKey generated");
+  // await zKey.newZKey(r1cPath, phase1Path, path.join(buildDir, "circuit_0.zkey"), console);
+  // log("✓ Partial ZKey generated");
 
   await zKey.contribute(path.join(buildDir, "circuit_0.zkey"), path.join(buildDir, "circuit_1.zkey"), "Contributer 1", ZKEY_ENTROPY, console);
   log("✓ First contribution completed");
@@ -101,7 +101,7 @@ async function exec() {
   const templates = {
     groth16: fs.readFileSync(solidityTemplate, "utf8"),
   };
-  const code = await zKey.exportSolidityVerifier(zKeyPath, templates, console);
+  const code = await zKey.exportSolidityVerifier(path.join(buildDir, "manual2.zkey"), templates, console);
   fs.writeFileSync(solidityVerifierPath, code);
   log(`✓ Solidity verifier exported - ${solidityVerifierPath}`);
 }
