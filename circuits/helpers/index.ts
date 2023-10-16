@@ -3,6 +3,8 @@ import { toCircomBigIntBytes } from "@zk-email/helpers/dist/binaryFormat";
 import dns from "dns"
 import { verifyDKIMSignature } from "@zk-email/helpers/dist/dkim";
 import { generateCircuitInputs } from "@zk-email/helpers/dist/input-helpers";
+// @ts-ignore
+import { groth16 } from "snarkjs";
 
 export async function getPubKey64(domain: string, selector: string) {
     let p = new Promise<string>((resolve, reject) => {
@@ -43,8 +45,6 @@ export async function generateCircuitInputsFromEmail (rawEmail: Buffer, ): Promi
     let safeId = dkimResult.message.indexOf(Buffer.from("@ 0x")) + 2;
     let emailFromId = await dkimResult.message.indexOf(Buffer.from("from:")) + 5;
 
-    console.log("pubkey", dkimResult.publicKey);
-
     const circuitInput = generateCircuitInputs({
       body: dkimResult.body,
       message: dkimResult.message,
@@ -65,4 +65,9 @@ export async function generateCircuitInputsFromEmail (rawEmail: Buffer, ): Promi
       nullifier: "0",
       relayer: "1",
     };
+}
+
+export async function generateCallDataFromCircuitInputs(input: CircuitInput, path_to_wasm: string, path_to_zkey: string) {
+    const {proof, publicSignals} = await groth16.fullProve(input, path_to_wasm, path_to_zkey, console);
+    return await groth16.exportSolidityCallData(proof, publicSignals);
 }

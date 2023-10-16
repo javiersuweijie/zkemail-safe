@@ -18,6 +18,10 @@ export class EmailClient {
 
     async getLastEmail(del = false) {
         const email = await this.client.RETR(1);
+        if (del) {
+            await this.client.QUIT();
+            // await this.client.DELE(1);
+        }
         return email;
     }
 }
