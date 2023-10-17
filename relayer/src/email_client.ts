@@ -1,4 +1,5 @@
 import Pop3Command from 'node-pop3';
+import { MaybeError, Result } from './utils';
 
 export class EmailClient {
     private client: Pop3Command;
@@ -12,16 +13,33 @@ export class EmailClient {
         })
     }
 
-    async getStat() {
-        return await this.client.STAT();
+    async getStat(): Promise<Result<string>> {
+        try {
+            const stat = await this.client.STAT();
+            return [stat, null];
+        } catch (e) {
+            return [null, new Error(`Error getting email stats ${e}`)];
+        }
     }
 
-    async getLastEmail(del = false) {
-        const email = await this.client.RETR(1);
-        if (del) {
-            await this.client.QUIT();
-            // await this.client.DELE(1);
+    async getEmailById(id: number, del = false): Promise<Result<string>> {
+        try {
+            const email = await this.client.RETR(id);
+            if (del) {
+                await this.client.QUIT();
+            }
+            return [email, null];
+        } catch (e) {
+            return [null, new Error(`Error getting email ${e}`)];
         }
-        return email;
+    }
+
+    async updateChanges(): Promise<MaybeError> {
+        try {
+            await this.client.QUIT();
+            return null;
+        } catch (e) {
+            return new Error(`Error updating changes ${e}`);
+        }
     }
 }

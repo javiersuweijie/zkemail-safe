@@ -7,6 +7,7 @@ import { Email, EmailStatus, emailSchema } from './models/email';
 import path from 'path';
 import { exit } from 'process';
 import {verify} from "dkim";
+import {MaybeError, Result, sleep} from "./utils";
 
 interface Context {
     db: {
@@ -14,12 +15,6 @@ interface Context {
     }
 }
 
-type Result<T> = [T, null] | [null, Error];
-type MaybeError = Error | null; 
-
-async function sleep(seconds: number) {
-    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
-}
 
 const main = async () => {
     dotenv.config();
@@ -35,10 +30,9 @@ const main = async () => {
         }
     };
 
-    const interval = 5;
+    const interval = 10;
     pullEmailLoop(ctx, interval);
 
-    exit(0);
 }
 
 async function pullEmailLoop(ctx: Context, interval: number) {
@@ -50,30 +44,40 @@ async function pullEmailLoop(ctx: Context, interval: number) {
     );
     while (true) {
         await sleep(interval); 
+        console.log("Pulling emails");
         const [stat, statError] = await emailClient.getStat();
         if (statError) {
             console.log(statError);
             continue;
         }
-        let countString , _ = stat.split(" ") ;
+        let [countString , _] = stat.split(" ") ;
         let count = countString ? +countString : 0;
-        for (let i = 0; i < +count; i++) {
-            const [email, emailError] = await emailClient.getLastEmail(true);
+        console.log("Found ", count, " emails");
+        for (let i = 1; i <= count; i++) {
+            console.log("Getting email", i)
+            const [email, emailError] = await emailClient.getEmailById(i, false);
             if (emailError) {
                 console.log(emailError);
                 continue;
             }
+            console.log("Parsing email")
             const [parsedEmail, parseError] = await parseEmail(email);
             if (parseError) {
                 console.log(parseError);
                 continue;
             }
+            console.log(`Found email from ${parsedEmail.from} with subject ${parsedEmail?.subject}`)
             const error = await validateEmail(parsedEmail);
             if (error) {
                 console.log(error);
                 continue;
             }
             await processEmail(ctx, email);
+            console.log("Processed email");
+        }
+        const updateError = await emailClient.updateChanges();
+        if (updateError) {
+            console.log(updateError);
         }
     }
 }

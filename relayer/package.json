@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "TS_NODE_IGNORE='' node --loader ts-node/esm src/index.ts",
+    "build": "tsc"
+  },
   "dependencies": {
     "@types/mongoose": "^5.11.97",
     "@zkemail-safe/circuits": "../circuits",
