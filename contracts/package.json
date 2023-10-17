@@ -3,7 +3,8 @@
     "version": "0.0.1",
     "scripts": {
       "build": "forge build",
-      "test": "forge test"
+      "test": "forge test",
+      "deploy-local": "forge script Deploy.s.sol --rpc-url http://127.0.0.1:8545"
     },
     "dependencies": {
       "@openzeppelin/contracts": "^4.9.2",
