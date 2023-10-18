@@ -1,0 +1,8 @@
+{
+    "scroll-sepolia": {
+        "ZkEmailSafe": "0x0000"
+    },
+    "Foundry": {
+        "ZkEmailSafe": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+    }
+}

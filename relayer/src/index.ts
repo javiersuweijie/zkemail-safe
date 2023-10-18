@@ -5,14 +5,17 @@ import { ParsedMail, simpleParser } from 'mailparser';
 import mongoose, { Model } from 'mongoose';
 import { Email, EmailStatus, emailSchema } from './models/email';
 import path from 'path';
-import { exit } from 'process';
 import {verify} from "dkim";
 import {MaybeError, Result, sleep} from "./utils";
+import { ZkEmailSafeClient } from './eth_client';
+import { foundry } from 'viem/chains';
+import { Hex, hexToBigInt } from 'viem';
 
 interface Context {
     db: {
         Email: Model<Email>,
-    }
+    },
+    ethClient: ZkEmailSafeClient,
 }
 
 
@@ -27,11 +30,13 @@ const main = async () => {
     const ctx: Context = {
         db: {
             Email: mongoose.model<Email>("email", emailSchema),
-        }
+        },
+        ethClient: new ZkEmailSafeClient(foundry, process.env.MNEMONIC!),
     };
 
     const interval = 10;
     pullEmailLoop(ctx, interval);
+    processEmailLoop(ctx, interval);
 
 }
 
@@ -67,12 +72,19 @@ async function pullEmailLoop(ctx: Context, interval: number) {
                 continue;
             }
             console.log(`Found email from ${parsedEmail.from} with subject ${parsedEmail?.subject}`)
+
+            const [verified, verificatioError] = await verifyEmailHeaders(email)
+            if (!verified || verificatioError) {
+                console.log("Unable to verify email header", verificatioError);
+                continue;
+            }
+
             const error = await validateEmail(parsedEmail);
             if (error) {
                 console.log(error);
                 continue;
             }
-            await processEmail(ctx, email);
+            await saveEmail(ctx, email);
             console.log("Processed email");
         }
         const updateError = await emailClient.updateChanges();
@@ -82,7 +94,59 @@ async function pullEmailLoop(ctx: Context, interval: number) {
     }
 }
 
-async function processEmail(ctx: Context, email: string) {
+function hexToBigIntRecursive(obj: Hex | Hex[] | Hex[][]): any {
+    console.log(obj);
+    if (Array.isArray(obj)) {
+        return obj.map(hexToBigIntRecursive);
+    } else {
+        return hexToBigInt(obj);
+    }
+}
+
+async function processEmailLoop(ctx: Context, interval: number) {
+    while (true) {
+        console.log("Processing email");
+        await sleep(interval)
+        let email = await ctx.db.Email.findOne({ status: EmailStatus.Pending }, null, { sort: { createdAt: 1 } });
+        if (!email) {
+            console.log("No emails to process");
+            continue;
+        }
+        console.log("Processing email with subject", email?.subject, email?.from);
+
+        try {
+            switch (email.type) {
+                case "APPROVE": {
+                    let circuitInputs = await generateCircuitInputsFromEmail(Buffer.from(email!.body, "utf-8"));
+                    let calldata = await generateCallDataFromCircuitInputs(circuitInputs, path.join(__dirname, "../lib/circuit/email_safe.wasm"), path.join(__dirname, "../lib/circuit/email_safe.zkey"))
+                    let calldataBn = hexToBigIntRecursive(JSON.parse("["+calldata+"]"));
+                    let [hash, voteError] = await ctx.ethClient.vote(calldataBn[0], calldataBn[1], calldataBn[2], calldataBn[3]);
+                    if (!hash || voteError) {
+                        console.log(voteError);
+                        continue;
+                    }
+                    email.tx_hash = hash;
+                    email.save();
+                    console.log("Vote tx hash", hash);
+                    break;
+                }
+                case "SEND": {
+
+                    break;
+                }
+                default: {
+                    throw new Error("Unknown email type");
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            email.status = EmailStatus.Failed;
+            await email.save();
+        }
+    }
+}
+
+async function saveEmail(ctx: Context, email: string) {
     let [parsedMail, err] = await parseEmail(email);
     if (err) {
         console.log(err);
@@ -103,6 +167,7 @@ async function processEmail(ctx: Context, email: string) {
         return
     }
     const e = new ctx.db.Email({ 
+        type: command?.type,
         from: parsedMail?.from?.value[0].address,
         body: email,
         status: EmailStatus.Pending,
