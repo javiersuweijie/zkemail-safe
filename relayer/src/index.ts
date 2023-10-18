@@ -126,12 +126,22 @@ async function processEmailLoop(ctx: Context, interval: number) {
                         continue;
                     }
                     email.tx_hash = hash;
+                    email.status = EmailStatus.Processed;
                     email.save();
                     console.log("Vote tx hash", hash);
                     break;
                 }
                 case "SEND": {
-
+                    const [_, amount, __, ___, recipient, ____, _____] = email.subject.split(" ");
+                    let [hash, proposeError] = await ctx.ethClient.proposeSpendEth(email.safe, recipient, BigInt(amount) * BigInt(10**18));
+                    if (!hash || proposeError) {
+                        console.log(proposeError);
+                        continue;
+                    }
+                    email.tx_hash = hash;
+                    email.status = EmailStatus.Processed;
+                    email.save();
+                    console.log("Propose tx hash", hash)
                     break;
                 }
                 default: {
