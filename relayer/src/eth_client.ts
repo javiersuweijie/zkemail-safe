@@ -1,5 +1,5 @@
 import { AcceptsDiscriminator } from "mongoose";
-import {Account, Address, getAddress, GetContractReturnType, PublicClient, WalletClient, createPublicClient, createWalletClient, getAbiItem, getContract, http} from "viem"
+import {Account, Address, getAddress, GetContractReturnType, PublicClient, WalletClient, createPublicClient, createWalletClient, getAbiItem, getContract, http, Hex} from "viem"
 import { scrollSepolia, foundry, Chain} from "viem/chains"
 import {mnemonicToAccount, privateKeyToAccount} from "viem/accounts"
 import { zesABI } from "../lib/contract/ZkEmailSafe"
@@ -22,8 +22,8 @@ export class ZkEmailSafeClient {
     private deployment: Deployment; 
     private chainName: string;
 
-    constructor(chain: Chain, mnemonic: string) {
-        this.account = mnemonicToAccount( mnemonic) 
+    constructor(chain: Chain, privateKey: Hex) {
+        this.account = privateKeyToAccount(privateKey) 
         this.pubClient = createPublicClient({
             chain,
             transport: http()

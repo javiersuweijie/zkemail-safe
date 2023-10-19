@@ -8,8 +8,9 @@ import path from 'path';
 import {verify} from "dkim";
 import {MaybeError, Result, sleep} from "./utils";
 import { ZkEmailSafeClient } from './eth_client';
-import { foundry } from 'viem/chains';
-import { Hex, hexToBigInt } from 'viem';
+import { foundry, scrollSepolia } from 'viem/chains';
+import { Hex, hexToBigInt, stringToHex } from 'viem';
+import { getAddress } from 'viem';
 
 interface Context {
     db: {
@@ -31,7 +32,7 @@ const main = async () => {
         db: {
             Email: mongoose.model<Email>("email", emailSchema),
         },
-        ethClient: new ZkEmailSafeClient(foundry, process.env.MNEMONIC!),
+        ethClient: new ZkEmailSafeClient(scrollSepolia, process.env.PRIVATE_KEY! as Hex),
     };
 
     const interval = 10;
@@ -71,13 +72,13 @@ async function pullEmailLoop(ctx: Context, interval: number) {
                 console.log(parseError);
                 continue;
             }
-            console.log(`Found email from ${parsedEmail.from} with subject ${parsedEmail?.subject}`)
+            console.log(`Found email from ${JSON.stringify(parsedEmail.from)} with subject ${parsedEmail?.subject}`)
 
-            const [verified, verificatioError] = await verifyEmailHeaders(email)
-            if (!verified || verificatioError) {
-                console.log("Unable to verify email header", verificatioError);
-                continue;
-            }
+            // const [verified, verificatioError] = await verifyEmailHeaders(email)
+            // if (!verified || verificatioError) {
+            //     console.log("Unable to verify email header", verificatioError);
+            //     continue;
+            // }
 
             const error = await validateEmail(parsedEmail);
             if (error) {
@@ -117,12 +118,14 @@ async function processEmailLoop(ctx: Context, interval: number) {
         try {
             switch (email.type) {
                 case "APPROVE": {
-                    let circuitInputs = await generateCircuitInputsFromEmail(Buffer.from(email!.body, "utf-8"));
+                    let circuitInputs = await generateCircuitInputsFromEmail(Buffer.from(email!.body, "utf-8"), email.from);
                     let calldata = await generateCallDataFromCircuitInputs(circuitInputs, path.join(__dirname, "../lib/circuit/email_safe.wasm"), path.join(__dirname, "../lib/circuit/email_safe.zkey"))
                     let calldataBn = hexToBigIntRecursive(JSON.parse("["+calldata+"]"));
                     let [hash, voteError] = await ctx.ethClient.vote(calldataBn[0], calldataBn[1], calldataBn[2], calldataBn[3]);
                     if (!hash || voteError) {
                         console.log(voteError);
+                        email.status = EmailStatus.Failed;
+                        await email.save();
                         continue;
                     }
                     email.tx_hash = hash;
@@ -133,7 +136,7 @@ async function processEmailLoop(ctx: Context, interval: number) {
                 }
                 case "SEND": {
                     const [_, amount, __, ___, recipient, ____, _____] = email.subject.split(" ");
-                    let [hash, proposeError] = await ctx.ethClient.proposeSpendEth(email.safe, recipient, BigInt(amount) * BigInt(10**18));
+                    let [hash, proposeError] = await ctx.ethClient.proposeSpendEth(email.safe, recipient, BigInt(Math.round(Number(amount) * 1e18)));
                     if (!hash || proposeError) {
                         console.log(proposeError);
                         continue;
@@ -187,8 +190,8 @@ async function saveEmail(ctx: Context, email: string) {
     return e.save()
 }
 
-async function generateCalldata(email: string): Promise<Result<any>> {
-    const inputs = await generateCircuitInputsFromEmail(Buffer.from(email, "utf-8"));
+async function generateCalldata(email: string, from: string): Promise<Result<any>> {
+    const inputs = await generateCircuitInputsFromEmail(Buffer.from(email, "utf-8"), from);
     const startTime = Date.now();
     try {
         const calldata = await generateCallDataFromCircuitInputs(inputs, path.join(__dirname, "../lib/circuit/email_safe.wasm"), path.join(__dirname, "../lib/circuit/email_safe.zkey"))
@@ -199,8 +202,8 @@ async function generateCalldata(email: string): Promise<Result<any>> {
     }
 }
 
-const approveRegex = /APPROVE #\d+ @ 0x[a-z0-9]/;
-const sendRegex = /SEND #\d+ ETH to 0x[a-z0-9] using 0x[a-z0-9]/;
+const approveRegex = /APPROVE #\d+ @ 0x[a-fA-F0-9]+/;
+const sendRegex = /SEND \d+(.\d+)? ETH to 0x[a-fA-F0-9]+ using 0x[a-fA-F0-9]+/;
 
 interface ApproveCommand {
     type: "APPROVE";
