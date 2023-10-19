@@ -39,11 +39,11 @@ export type CircuitInput = {
   relayer: string;
 };
 
-export async function generateCircuitInputsFromEmail (rawEmail: Buffer, ): Promise<CircuitInput> {
+export async function generateCircuitInputsFromEmail (rawEmail: Buffer, fromEmail: string ): Promise<CircuitInput> {
     const dkimResult = await verifyDKIMSignature(rawEmail);
-    let proposalId = dkimResult.message.indexOf(Buffer.from("#")) + 1;
+    let proposalId = dkimResult.message.indexOf(Buffer.from("APPROVE #")) + 9;
     let safeId = dkimResult.message.indexOf(Buffer.from("@ 0x")) + 2;
-    let emailFromId = await dkimResult.message.indexOf(Buffer.from("from:")) + 5;
+    let emailFromId = await dkimResult.message.indexOf(Buffer.from(fromEmail));
 
     const circuitInput = generateCircuitInputs({
       body: dkimResult.body,
@@ -67,7 +67,7 @@ export async function generateCircuitInputsFromEmail (rawEmail: Buffer, ): Promi
     };
 }
 
-export async function generateCallDataFromCircuitInputs(input: CircuitInput, path_to_wasm: string, path_to_zkey: string) {
-    const {proof, publicSignals} = await groth16.fullProve(input, path_to_wasm, path_to_zkey, console);
+export async function generateCallDataFromCircuitInputs(input: CircuitInput, path_to_wasm: string, path_to_zkey: string, verbose = false) {
+    const {proof, publicSignals} = await groth16.fullProve(input, path_to_wasm, path_to_zkey, verbose ? console : undefined);
     return await groth16.exportSolidityCallData(proof, publicSignals);
 }

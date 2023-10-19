@@ -2,6 +2,7 @@ pragma circom 2.1.5;
 
 include "@zk-email/circuits/regexes/regex_helpers.circom";
 
+//regex: ((\r\n)|^)subject:APPROVE #([0-9]+) @ (0x[0-9a-fA_F]+)\r\n
 template SubjectRegex (msg_bytes) {
     signal input msg[msg_bytes];
     signal output out;
