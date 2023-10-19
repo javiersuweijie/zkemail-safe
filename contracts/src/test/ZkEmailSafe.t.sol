@@ -42,17 +42,35 @@ contract ZkEmailSafeTest is Test {
     }
 
     function testAddSafeCorrectly() public {
-        uint64 count = zkEmailSafe.signerCount(safe1);
+        bytes32[] memory emails = new bytes32[](2);
+        emails[0] = email1;
+        emails[1] = email2;
+        
+        bool isNotSafe = !zkEmailSafe.isSafe(safe2);
+        assertTrue(isNotSafe);
+
+        vm.startPrank(safe2);
+        zkEmailSafe.add_safe(2, emails);
+        vm.stopPrank();
+
+        bool isSafe = zkEmailSafe.isSafe(safe2);
+        assertTrue(isSafe);
+
+
+        uint64 count = zkEmailSafe.signerCount(safe2);
         assertEq(count, 2);
 
-        bytes32 email = zkEmailSafe.iterateSigner(safe1, zkEmailSafe.email_start());
+        bytes32 email = zkEmailSafe.iterateSigner(safe2, zkEmailSafe.email_start());
         assertEq32(email, email1);
 
-        email = zkEmailSafe.iterateSigner(safe1, email);
+        email = zkEmailSafe.iterateSigner(safe2, email);
         assertEq32(email, email2);
 
-        bool isSigner = zkEmailSafe.isSigner(safe1, email2);
+        bool isSigner = zkEmailSafe.isSigner(safe2, email2);
         assertTrue(isSigner);
+
+        uint64 threshold = zkEmailSafe.thresholds(safe2);
+        assertEq(threshold, 2);
     }
 
     function testAddProposal() public {

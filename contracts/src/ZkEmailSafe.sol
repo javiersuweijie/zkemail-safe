@@ -24,7 +24,7 @@ contract ZkEmailSafe {
     // ============================
     // Module Constants
     // ============================
-    uint16 public constant max_signers = 256;
+    uint16 public constant max_signers = 32;
     bytes32 public constant email_start = "_";
 
     // ============================
@@ -40,9 +40,9 @@ contract ZkEmailSafe {
     // Email max length 31 characters
     mapping (address => mapping(bytes32 => bytes32)) signers;
     // Safe -> Number of signers required to pass a proposal
-    mapping (address => uint64) thresholds;
+    mapping (address => uint64) public thresholds;
     // Safe -> Next Proposal ID
-    mapping (address => uint64) nextProposalId;
+    mapping (address => uint64) public nextProposalId;
     // Safe -> Proposal ID -> Proposal data
     mapping (address => mapping(uint64 => bytes)) proposals;
     // Safe -> Proposal ID -> Linked list of signers who voted
@@ -183,10 +183,14 @@ contract ZkEmailSafe {
     }
 
     function isSafe(address safe) external view returns (bool) {
-        return signers[safe][email_start].length != 0;
+        return signers[safe][email_start] != 0x0000000000000000000000000000000000000000000000000000000000000000;
     }
     
     function iterateSigner(address safe, bytes32 email) external view returns (bytes32) {
         return signers[safe][email];
+    }
+
+    function iterateVotes(address safe, uint64 proposalId, bytes32 email) external view returns (bytes32) {
+        return votes[safe][proposalId][email];
     }
 }

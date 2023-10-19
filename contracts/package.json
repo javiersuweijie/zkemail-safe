@@ -4,7 +4,8 @@
     "scripts": {
       "build": "forge build",
       "test": "forge test",
-      "deploy-local": "forge script Deploy.s.sol --rpc-url http://127.0.0.1:8545"
+      "deploy-local": "forge script Deploy.s.sol --rpc-url http://127.0.0.1:8545",
+      "deploy-ss": "forge script Deploy.s.sol --rpc-url https://sepolia-rpc.scroll.io"
     },
     "dependencies": {
       "@openzeppelin/contracts": "^4.9.2",

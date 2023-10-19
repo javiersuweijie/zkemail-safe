@@ -71,6 +71,24 @@ contract MailServer is Ownable {
         verifiedMailserverKeys["ethereum.org"][14] = 0;
         verifiedMailserverKeys["ethereum.org"][15] = 0;
         verifiedMailserverKeys["ethereum.org"][16] = 0;
+
+        verifiedMailserverKeys["proton.me"][0] = 913891206902747244664747020968558259;
+        verifiedMailserverKeys["proton.me"][1] = 1972901582512682675310311312776703330;
+        verifiedMailserverKeys["proton.me"][2] = 1271254850995070111689795451119553905;
+        verifiedMailserverKeys["proton.me"][3] = 761251125734672353504177040036773981;
+        verifiedMailserverKeys["proton.me"][4] = 2649236452477034537871075340909610458;
+        verifiedMailserverKeys["proton.me"][5] = 797204999605065995847033273845334469;
+        verifiedMailserverKeys["proton.me"][6] = 431665553429246829372283307811261199;
+        verifiedMailserverKeys["proton.me"][7] = 2519265340557762696665849280444169595;
+        verifiedMailserverKeys["proton.me"][8] = 614771124440053389931039527792329052;
+        verifiedMailserverKeys["proton.me"][9] = 346547961474255468698682697091329228;
+        verifiedMailserverKeys["proton.me"][10] = 1644056136146630059529017048340409920;
+        verifiedMailserverKeys["proton.me"][11] = 1435425770606909017673442738893123308;
+        verifiedMailserverKeys["proton.me"][12] = 429440991622236380985084713724774430;
+        verifiedMailserverKeys["proton.me"][13] = 1333616918559527589215725487503491629;
+        verifiedMailserverKeys["proton.me"][14] = 824096634501694007840550414810418446;
+        verifiedMailserverKeys["proton.me"][15] = 646624441958089088676457473935543531;
+        verifiedMailserverKeys["proton.me"][16] = 3236208936482879880513152955132688;
     }
 
     function setProxyOwner(address proxyAddress) public onlyOwner {
