@@ -25,7 +25,8 @@ const main = async () => {
     const mongo_uri = process.env.MONGO_URI;
     const mongo_db = process.env.MONGO_DB;
     // connect to mongo db
-    await mongoose.connect(`mongodb://${mongo_uri}/${mongo_db}`, {
+    await mongoose.connect(`${mongo_uri}/${mongo_db}`, {
+        tls: mongo_uri?.includes("localhost") ? false : true,
     });
     console.log("Connected to mongo db");
     const ctx: Context = {
