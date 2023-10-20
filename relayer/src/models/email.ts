@@ -8,7 +8,7 @@ export enum EmailStatus {
 }
 
 export interface Email {
-    type: "APPROVE" | "SEND";
+    type: "APPROVE" | "SEND" | "EXECUTE";
     body: string;
     status: EmailStatus;
     subject: string;

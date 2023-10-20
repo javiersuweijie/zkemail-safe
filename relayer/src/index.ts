@@ -147,6 +147,19 @@ async function processEmailLoop(ctx: Context, interval: number) {
                     console.log("Propose tx hash", hash)
                     break;
                 }
+                case "EXECUTE": {
+                    const [_, proposalId, __, ___] = email.subject.split(" ");
+                    let [hash, executeError] = await ctx.ethClient.execute(email.safe, BigInt(proposalId.slice(1)));
+                    if (!hash || executeError) {
+                        console.log(executeError);
+                        continue;
+                    }
+                    email.tx_hash = hash;
+                    email.status = EmailStatus.Processed;
+                    email.save();
+                    console.log("Execute tx hash", hash)
+                    break;
+                }
                 default: {
                     throw new Error("Unknown email type");
                 }
@@ -204,6 +217,7 @@ async function generateCalldata(email: string, from: string): Promise<Result<any
 
 const approveRegex = /APPROVE #\d+ @ 0x[a-fA-F0-9]+/;
 const sendRegex = /SEND \d+(.\d+)? ETH to 0x[a-fA-F0-9]+ using 0x[a-fA-F0-9]+/;
+const exeuteRegex = /EXECUTE #\d+ @ 0x[a-fA-F0-9]+/;
 
 interface ApproveCommand {
     type: "APPROVE";
@@ -218,7 +232,13 @@ interface SendCommand {
     safeAddress: string;
 }
 
-function parseSubject(subject: string): Result<(ApproveCommand | SendCommand)> {
+interface ExecuteCommand {
+    type: "EXECUTE";
+    proposalId: string;
+    safeAddress: string;
+}
+
+function parseSubject(subject: string): Result<(ApproveCommand | SendCommand | ExecuteCommand)> {
     if (subject.match(approveRegex)) {
         const [_, proposalId, __, safeAddress] = subject.split(" ");
         return [{
@@ -232,6 +252,13 @@ function parseSubject(subject: string): Result<(ApproveCommand | SendCommand)> {
             type: "SEND",
             amount,
             recipient,
+            safeAddress,
+        }, null];
+    } else if (subject.match(exeuteRegex)) {
+        const [_, proposalId, __, safeAddress] = subject.split(" ");
+        return [{
+            type: "EXECUTE",
+            proposalId: proposalId,
             safeAddress,
         }, null];
     } else {
@@ -264,7 +291,7 @@ async function verifyEmailHeaders(mail: string): Promise<Result<boolean>> {
 
 function validateEmail(mail: ParsedMail):MaybeError  {
     // check if subject matches pattern
-    if (mail.subject && !(mail.subject.match(approveRegex) || mail.subject.match(sendRegex))) {
+    if (mail.subject && !(mail.subject.match(approveRegex) || mail.subject.match(sendRegex) || mail.subject.match(exeuteRegex))) {
         return new Error(`Subject ${mail.subject} does not match pattern`);
     }
     // check if body is too long
