@@ -2,3 +2,4 @@ node_modules
 compiled-test-circuit
 build
 .env
+contracts/broadcast/
