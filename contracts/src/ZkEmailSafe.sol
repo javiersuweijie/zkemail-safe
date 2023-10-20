@@ -47,6 +47,8 @@ contract ZkEmailSafe {
     mapping (address => mapping(uint64 => bytes)) proposals;
     // Safe -> Proposal ID -> Linked list of signers who voted
     mapping (address => mapping(uint64 => mapping(bytes32 => bytes32))) votes;
+    // Safe -> Proposal ID -> Executed
+    mapping (address => mapping(uint64 => bool)) public executed;
 
     constructor (MailServer ms, Groth16Verifier v) {
         mailServer = ms;
@@ -129,9 +131,10 @@ contract ZkEmailSafe {
         bytes storage proposalData = proposals[safe][proposalId];
         (address to, uint256 amount, bytes memory data, Enum.Operation operation) = abi.decode(proposalData, (address, uint256, bytes, Enum.Operation));
 
+        require(!executed[safe][proposalId], "Already executed");
         require(this.voteCount(safe, proposalId) >= thresholds[safe], "Not enough votes");
-        require(ISafe(safe).execTransactionFromModule(to, amount, data, operation));
-        delete proposals[safe][proposalId];
+        require(ISafe(safe).execTransactionFromModule(to, amount, data, operation), "Transaction failed");
+        executed[safe][proposalId] = true;
     }
 
     function proposal(address safe, uint64 proposalId) external view returns (bytes memory) {

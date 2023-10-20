@@ -88,6 +88,9 @@ contract ZkEmailSafeTest is Test {
         assertEq(data.length, 0);
         assertEq(uint256(operation), uint256(Enum.Operation.Call));
 
+        bool executed = zkEmailSafe.executed(safe1, id);
+        assertFalse(executed, "Should not be executed");
+
         // should fail to execute since there are no votes
         vm.expectRevert("Not enough votes");
         zkEmailSafe.execute(safe1, id);
