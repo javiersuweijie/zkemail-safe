@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-theme="emerald"] .btn {
+    border-width: 3px;
+    border-color: black;
+}
+[data-theme="emerald"] .btn.btn-outline {
+    border-width: 1px;
+    border-color: black;
+}
+
+/* disabled btn to have smaller borders */
+[data-theme="emerald"] .btn.btn-disabled {
+    border-width: 1px;
+    border-color: black;
+}
+
+.collapse-force-open {
+    grid-template-rows: auto 1fr;
+}
+
+.collapse-force-open .collapse-content {
+    visibility: visible;
+    min-height: -moz-fit-content;
+    min-height: fit-content;
+}
