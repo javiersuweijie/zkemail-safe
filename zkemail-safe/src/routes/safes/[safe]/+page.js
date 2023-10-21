@@ -15,7 +15,6 @@ export function load({ params }) {
     let signers = getAllSigners(safe);
     let proposals = getAllProposals(safe);
     let balance = getEthBalance(safe);
-    let canSign = isSigner(safe, "javier.su.weijie@gmail.com");
     let threshold = getThreshold(safe);
 
     return {
@@ -23,7 +22,6 @@ export function load({ params }) {
         isSafe,
         signers,
         balance,
-        canSign,
         threshold,
         streamed: {
             proposals
