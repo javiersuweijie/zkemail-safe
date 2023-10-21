@@ -1,22 +1,25 @@
 import { getAllProposals, getAllSigners, getEthBalance, isSafeCreated, isSigner, getThreshold } from '$lib';
 import { error } from '@sveltejs/kit';
 
-/** @type {import('./$types').PageLoad} */
+
+/** @type {import('../[safe]/$types').PageLoad} */
 export function load({ params }) {
-    let isSafe = isSafeCreated(params.safe).then((isCreated) => {
+
+    let safe = params.safe.toLowerCase();
+    let isSafe = isSafeCreated(safe).then((isCreated) => {
         if (!isCreated) {
             throw error(404, 'Not found');
         }
         return isCreated;
     });
-    let signers = getAllSigners(params.safe);
-    let proposals = getAllProposals(params.safe);
-    let balance = getEthBalance(params.safe);
-    let canSign = isSigner(params.safe, "javier.su.weijie@gmail.com");
-    let threshold = getThreshold(params.safe);
+    let signers = getAllSigners(safe);
+    let proposals = getAllProposals(safe);
+    let balance = getEthBalance(safe);
+    let canSign = isSigner(safe, "javier.su.weijie@gmail.com");
+    let threshold = getThreshold(safe);
 
     return {
-        safe: params.safe.toLowerCase(),
+        safe,
         isSafe,
         signers,
         balance,

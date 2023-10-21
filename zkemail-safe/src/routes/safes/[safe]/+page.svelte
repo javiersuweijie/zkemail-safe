@@ -61,6 +61,7 @@
                 <p class="text-sm font-medium">{data.safe}</p>
                 <p class="text-lg mt-3 font-bold">Assets</p>
                 <p class="text-sm font-medium">{data.balance} ETH</p>
+                <button class="btn btn-outline btn-sm mt-4">Deposit</button>
             </div>
         </div>
         <div class="w-full sm:w-1/2 md:ml-4 p-4 border-primary-content border-solid border-4 rounded-xl">
@@ -71,6 +72,7 @@
                 {/each}
             <p class="text-lg mt-3 font-bold">Threshold</p>
             <p class="text-sm font-medium">{data.threshold}/{data.signers.length}</p>
+            <button class="btn btn-outline btn-sm mt-4">Edit</button>
             </div>
         </div>
     </div>

@@ -19,6 +19,7 @@
 		<div class="w-full flex h-5/6 md:h-full">
 			<div class="w-4/12 items-center justify-center hidden md:flex bg-base-200">
 				<div class="px-8 text-left text-primary-content">
+					<img src="/logo.svg" class="w-16 inline" />	
 					<h1 class="text-4xl font-extrabold">ZKEmail Safe</h1>
 					<br/>
 						<p>

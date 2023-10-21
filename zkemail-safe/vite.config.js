@@ -6,5 +6,6 @@ export default defineConfig({
 	server: {
 		cors: true,
 	},
-	plugins: [sveltekit(), nodePolyfills()]
+	plugins: [sveltekit(), nodePolyfills()],
+	define: { _global: ({}), },
 });
