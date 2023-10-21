@@ -3,3 +3,4 @@ compiled-test-circuit
 build
 .env
 contracts/broadcast/
+relayer/src/**/*.js
