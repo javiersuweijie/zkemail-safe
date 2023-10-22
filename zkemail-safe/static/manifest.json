@@ -1,5 +1,5 @@
 {
     "name": "zkEmail Safe",
-    "description": "A description of what your app do",
+    "description": "Use emails to control your Safe secured using ZK proofs",
     "iconPath": "favicon.png"
  }
