@@ -28,6 +28,9 @@
             if (a[i].voters.length !== b[i].voters.length) {
                 return false;
             }
+            if (a[i].executed !== b[i].executed) {
+                return false;
+            }
         }
         return true;
     }
@@ -107,7 +110,7 @@
                 <input type="text" class:input-error={false} bind:value={recipient} on:change={generateMailTo} class="input input-bordered w-full" />
             </div>
             <form method="dialog" class="flex justify-end items-center pt-4" onclick="my_modal_2.close()">
-                <button class="btn btn-disabled">Sign with wallet</button>
+                <button class="btn">Sign with wallet</button>
                 <span class="mx-2">or</span>
                 <a class="btn" href={mailto} target="_blank">Send email</a>
             </form>
@@ -154,7 +157,7 @@
                     {:else if proposalStatus(proposal) === "Pending Execution"}
                         <a class="btn btn-sm btn-outline border-1" href="{generateExecuteMail(proposal.id)}" target="_blank">Execute</a>
                     {:else}
-                        <a class="btn btn-sm btn-outline border-1 btn-disabled" href="{generateExecuteMail(proposal.id)}" target="_blank">Executed</a>
+                        <a class="btn btn-sm btn-outline border-1" target="_blank">Executed</a>
                     {/if}
                 </td>
                 </tr>
