@@ -45,6 +45,9 @@
     }
 
     function proposalStatus(proposal) {
+        if (proposal.executed) {
+            return "Executed"
+        }
         if (proposal.voters.length >= data.threshold) {
             return "Pending Execution"
         } else {
@@ -148,8 +151,10 @@
                 <td>
                     {#if proposalStatus(proposal) === "Pending Approval"}
                         <a class="btn btn-sm btn-outline border-1" href="{generateApproveMail(proposal.id)}" target="_blank">Approve</a>
-                    {:else}
+                    {:else if proposalStatus(proposal) === "Pending Execution"}
                         <a class="btn btn-sm btn-outline border-1" href="{generateExecuteMail(proposal.id)}" target="_blank">Execute</a>
+                    {:else}
+                        <a class="btn btn-sm btn-outline border-1 btn-disabled" href="{generateExecuteMail(proposal.id)}" target="_blank">Executed</a>
                     {/if}
                 </td>
                 </tr>

@@ -4,7 +4,7 @@ import { createPublicClient, decodeAbiParameters, formatEther, http, parseAbi, p
 import { scrollSepolia } from "viem/chains";
 import { writable } from 'svelte/store';
 
-export let zkEmailSafeAddress = "0xf3A6ca26F9838C744a69F0B3ed85d548D115968f";
+export let zkEmailSafeAddress = "0x2aa54741b34173eB843A78Bc5ABCeeDbbF332C6C";
 export let zkEmailSafeAddressAbi = [
     "function isSigner(address safe, bytes32 email) returns (bool)",
     "function isSafe(address safe) returns (bool)",
@@ -13,7 +13,8 @@ export let zkEmailSafeAddressAbi = [
     "function voteCount(address safe, uint64 proposalId) returns (uint64)",
     "function proposalCount(address safe) returns (uint64)",
     "function proposal(address safe, uint64 proposalId) external view returns (bytes memory)",
-    "function thresholds(address safe) returns (uint64)"
+    "function thresholds(address safe) returns (uint64)",
+    "function executed(address safe, uint64 proposalId) returns (bool)"
 ];
 
 let publicClient = createPublicClient({
@@ -129,6 +130,14 @@ export async function getAllProposals(safe, limit=10) {
         }
         const voters = await getAllVoters(safe, p.id);
         p.voters = voters;
+
+        const executed = await publicClient.readContract({
+            address: zkEmailSafeAddress,
+            abi: parseAbi(zkEmailSafeAddressAbi),
+            functionName: "executed",
+            args: [safe, p.id],
+        });
+        p.executed = executed;
     }
 
     if (proposals.length === 0) {
