@@ -5,8 +5,6 @@ import "./MailServer.sol";
 import "./ISafe.sol";
 import "./Enum.sol";
 import "./helpers/StringUtils.sol";
-// TODO: Remove this import
-import "ds-test/test.sol";  
 
 contract ZkEmailSafe {
 
