@@ -28,3 +28,8 @@ UI layer that implements the Safe SDK.
 ![Add Module Page](./docs/static/add-module.png)
 
 ![Module Dashboard](./docs/static/dashboard.png)
+
+
+## Open Issues
+
+1. Unable to verify contracts on scroll's blockexplorer
